@@ -10,7 +10,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 // mongoose connection URL
-mongoose.connect("mongodb://localhost:27017/wikiDB";
+mongoose.connect("mongodb://localhost:27017/wikiDB");
+
+
+//wiki schema 
+const articleSchema = new mongoose.Schema ({
+    title: {
+        type: String
+      },
+      content : {
+        type: String
+      }
+});
+
+// wiki model 
+const Article = mongoose.model("Article" , articleSchema);
+
 
 
 
