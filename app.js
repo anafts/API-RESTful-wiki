@@ -27,11 +27,11 @@ const articleSchema = new mongoose.Schema ({
 const Article = mongoose.model("Article" , articleSchema);
 
 
-
+// request all articles 
 app.route('/articles')
 
-
   .get(function(req, res) {
+
     Article.find(function(err, foundArticles){
         if (!err) {
             res.send(foundArticles);
@@ -43,6 +43,7 @@ app.route('/articles')
 
 
   .post(function(req, res) {
+
     const NewArticle = new Article ({
         title: req.body.title ,
         content: req.body.content
@@ -59,6 +60,7 @@ app.route('/articles')
 
 
   .delete(function(req, res) {
+
     Article.deleteMany( function(err){
         if (!err) {
             res.send("Successfully deleted all article.");
@@ -70,7 +72,63 @@ app.route('/articles')
 
 
 
+  // request a specific articles 
+  app.route("/articles/:articleTitle")
 
+  .get(function(req, res){
+
+    Article.findOne({title: {$regex: new RegExp("^" + req.params.articleTitle, "i")} }, function(err, foundArticle) {
+        if(foundArticle) {
+            res.send(foundArticle);
+        } else {
+            res.send("No articles matching that little was found.")
+        }
+    });
+  })
+
+     // to update the entire article
+  .put(function(req, res){
+
+    Article.findOneAndUpdate(
+        {title:req.params.articleTitle} ,
+        {title:req.body.title , content: req.body.content} , 
+         {overwrite:true} ,
+         (err)=>{
+            if(!err){
+                res.send("Successfully updated!")
+            }else {
+                res.send(err)
+            }
+     });
+  })
+
+
+  .patch(function(req, res) {
+    Article.updateOne(
+        {title:req.params.articleTitle} ,
+        {$set:req.body} ,
+        err => {
+            if (!err) {
+        res.send('Successfully updated article!'); 
+        } else {
+            res.send(err);
+        }
+     });
+  })
+
+  .delete(function(req, res) {
+
+    Article.findOneAndDelete(
+        {title:req.params.articleTitle} ,
+        {title:req.body.title , content: req.body.content} , 
+        err => {
+            if (!err) {
+        res.send('Successfully deleted article!'); 
+        } else {
+            res.send(err);
+        }
+     });
+  }); 
 
 
 
