@@ -90,7 +90,7 @@ app.route('/articles')
   .put(function(req, res){
 
     Article.findOneAndUpdate(
-        {title:req.params.articleTitle} ,
+        {title: {$regex: new RegExp("^" + req.params.articleTitle, "i")} },
         {title:req.body.title , content: req.body.content} , 
          {overwrite:true} ,
          (err)=>{
@@ -105,7 +105,7 @@ app.route('/articles')
 
   .patch(function(req, res) {
     Article.updateOne(
-        {title:req.params.articleTitle} ,
+        {title: {$regex: new RegExp("^" + req.params.articleTitle, "i")} } ,
         {$set:req.body} ,
         err => {
             if (!err) {
@@ -119,8 +119,7 @@ app.route('/articles')
   .delete(function(req, res) {
 
     Article.findOneAndDelete(
-        {title:req.params.articleTitle} ,
-        {title:req.body.title , content: req.body.content} , 
+        {title: {$regex: new RegExp("^" + req.params.articleTitle, "i")} } , 
         err => {
             if (!err) {
         res.send('Successfully deleted article!'); 
